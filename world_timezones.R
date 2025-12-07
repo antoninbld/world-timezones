@@ -5,6 +5,7 @@ library(mapgl)
 library(sf)
 library(dplyr)
 library(lubridate)
+library(htmlwidgets)  # pour sauvegarder la carte en HTML
 
 # Get user's current timezone and time
 user_tz <- Sys.timezone()
@@ -82,7 +83,6 @@ tz_palette <- c(
   "#3d5a7f", # UTC-8
   "#5a7a9f", # UTC-6
   "#7a9abf", # UTC-4
-
   "#9abadf", # UTC-2
   "#f0f4f8", # UTC (neutral dawn)
   "#ffe4b5", # UTC+2
@@ -122,7 +122,8 @@ info_html <- paste0(
   "</div>"
 )
 
-maplibre(
+# Crée la carte et retourne un widget HTML
+m <- maplibre(
   style = carto_style("dark-matter"),
   center = c(user_center_lon, 30),
   zoom = 3
@@ -184,3 +185,12 @@ maplibre(
   ) |>
   add_navigation_control(position = "top-right") |>
   add_fullscreen_control(position = "top-right")
+
+# Affiche la carte dans RStudio
+m
+
+# Sauvegarde la carte en fichier HTML dans le dossier courant
+saveWidget(m, "index.html", selfcontained = TRUE)
+
+# Ouvre automatiquement la page dans le navigateur
+browseURL(file.path(getwd(), "index.html"))
